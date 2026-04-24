@@ -8,7 +8,7 @@ import { Component } from '@angular/core';
       housing-location works!
     </p>
   `,
-  styleUrl: "./housing-location.css"
+  styleUrls: ['./housing-location.css']
 })
 export class HousingLocation {
 
