@@ -1,13 +1,17 @@
 import { Router } from 'express';
-import { housingLocations } from '../data/housingLocations';
+import { HousingLocationModel } from '../models/housing-location.model';
 
 const locationsRouter = Router();
 
-locationsRouter.get('/', (_req, res) => {
+locationsRouter.get('/', async (_req, res) => {
+  const housingLocations = await HousingLocationModel.find({}, { _id: 0 })
+    .sort({ id: 1 })
+    .lean();
+
   res.json(housingLocations);
 });
 
-locationsRouter.get('/:id', (req, res) => {
+locationsRouter.get('/:id', async (req, res) => {
   const id = Number.parseInt(req.params.id, 10);
 
   if (Number.isNaN(id)) {
@@ -15,7 +19,7 @@ locationsRouter.get('/:id', (req, res) => {
     return;
   }
 
-  const housingLocation = housingLocations.find((location) => location.id === id);
+  const housingLocation = await HousingLocationModel.findOne({ id }, { _id: 0 }).lean();
 
   if (!housingLocation) {
     res.status(404).json({ error: `Location with id ${id} was not found` });

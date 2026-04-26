@@ -1,13 +1,17 @@
+import 'dotenv/config';
 import cors from 'cors';
 import express from 'express';
+import { connectToDatabase } from './config/database';
 import { locationsRouter } from './routes/locations.routes';
 
 const app = express();
 const port = Number.parseInt(process.env.PORT ?? '3000', 10);
+const clientOrigin = process.env.CLIENT_ORIGIN ?? 'http://localhost:4200';
+const serverUrl = `http://localhost:${port}`;
 
 app.use(
   cors({
-    origin: 'http://localhost:4200',
+    origin: clientOrigin,
   }),
 );
 app.use(express.json());
@@ -18,6 +22,17 @@ app.get('/', (_req, res) => {
 
 app.use('/locations', locationsRouter);
 
-app.listen(port, () => {
-  console.log(`Housing API listening on port ${port}`);
+async function startServer(): Promise<void> {
+  await connectToDatabase();
+
+  app.listen(port, () => {
+    console.log(`Housing API listening on ${serverUrl}`);
+    console.log(`CORS enabled for ${clientOrigin}`);
+  });
+}
+
+startServer().catch((error: unknown) => {
+  console.error('Failed to start server');
+  console.error(error instanceof Error ? error.message : error);
+  process.exit(1);
 });
