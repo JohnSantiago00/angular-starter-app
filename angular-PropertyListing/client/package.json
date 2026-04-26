@@ -1,13 +1,13 @@
 {
-  "name": "angular.dev",
+  "name": "housing-client",
   "version": "0.0.0",
+  "private": true,
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development"
   },
-  "private": true,
   "dependencies": {
     "@angular/common": "^21.2.0-next",
     "@angular/compiler": "^21.2.0-next",
