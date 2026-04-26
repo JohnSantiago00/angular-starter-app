@@ -7,7 +7,7 @@ A beginner-friendly full-stack housing listings app built with:
 - **MongoDB Atlas** as the database
 - **Docker Compose** for local development
 
-This README teaches the project **only the Docker way**.
+
 
 ---
 
@@ -259,18 +259,3 @@ If it fails, check:
 
 ---
 
-## What this setup is for
-
-This setup is for:
-
-- local development
-- learning Docker with a full-stack app
-- running Angular and Express together easily
-
-This setup is **not** adding:
-
-- local MongoDB container
-- nginx
-- deployment
-- auth
-- application persistence
