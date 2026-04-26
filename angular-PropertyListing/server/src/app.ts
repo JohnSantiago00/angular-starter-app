@@ -6,6 +6,7 @@ import { locationsRouter } from './routes/locations.routes';
 
 const app = express();
 const port = Number.parseInt(process.env.PORT ?? '3000', 10);
+const host = process.env.HOST ?? '0.0.0.0';
 const clientOrigin = process.env.CLIENT_ORIGIN ?? 'http://localhost:4200';
 const serverUrl = `http://localhost:${port}`;
 
@@ -25,7 +26,7 @@ app.use('/locations', locationsRouter);
 async function startServer(): Promise<void> {
   await connectToDatabase();
 
-  app.listen(port, () => {
+  app.listen(port, host, () => {
     console.log(`Housing API listening on ${serverUrl}`);
     console.log(`CORS enabled for ${clientOrigin}`);
   });
