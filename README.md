@@ -99,8 +99,3 @@ Open the app at:
 - MongoDB is the live runtime data source.
 - Sample seed data is kept in the server seed script area, not in the frontend.
 
-## More Documentation
-
-For the full project README with architecture, troubleshooting, and workflow details, see:
-
-- [`angular-PropertyListing/README.md`](./angular-PropertyListing/README.md)
