@@ -108,10 +108,10 @@ Before using Docker, make sure you have:
 
 ## Docker commands
 
-From the app root:
+Important: run Docker Compose from the app root, not from `client/` or `server/`.
 
 ```bash
-cd angular-PropertyListing
+cd /home/nick/Projects/angular-starter-app/angular-PropertyListing
 ```
 
 ### Run everything
@@ -191,8 +191,8 @@ curl http://localhost:3000/locations/0
 - Filter listings by city on the frontend
 - View listing details by numeric `id`
 - MongoDB-backed API reads
-- Seed script for loading sample data into MongoDB
-- Docker Compose development workflow
+- Seed script for loading sample data into MongoDB Atlas
+- Docker Compose development workflow for the Angular client and Express server
 
 ## API
 
@@ -203,8 +203,9 @@ curl http://localhost:3000/locations/0
 ## Notes
 
 - The frontend search is currently **client-side filtering**.
-- MongoDB is the live runtime data source.
+- MongoDB Atlas is the live runtime data source.
 - Sample seed data is kept in the server seed script area, not in the frontend.
+- The Docker setup runs only the Angular client and Express server.
 - This Docker setup is for **local development learning only**.
 
 ## What we are not adding yet
@@ -225,19 +226,54 @@ Check:
 - Atlas user/password are valid
 
 ### Port 3000 is already in use
-Stop the process using port 3000, or change the conflicting process before starting Docker.
+This usually means you already have the Express server running outside Docker.
+
+Check what is using the port:
+```bash
+lsof -i :3000
+```
+
+Then stop the conflicting process and retry:
+```bash
+docker compose down
+docker compose up
+```
 
 ### Port 4200 is already in use
-Stop the process using port 4200, or change the conflicting process before starting Docker.
+This usually means you already have Angular running outside Docker.
+
+Check what is using the port:
+```bash
+lsof -i :4200
+```
+
+Then stop the conflicting process and retry:
+```bash
+docker compose down
+docker compose up
+```
 
 ### Angular cannot reach the backend
 Check:
 - server container is running
 - `http://localhost:3000/` works
 - frontend still points to `http://localhost:3000/locations`
+- the server container actually started without an Atlas connection error
+
+Useful log commands:
+```bash
+docker compose logs -f server
+docker compose logs -f client
+```
 
 ### Seed command fails in Docker
 Check:
 - server container is running
 - env vars were loaded from `server/.env`
 - Atlas is reachable from your machine/network
+- your current IP is allowed in Atlas Network Access
+
+Run the seed command again with:
+```bash
+docker compose exec server npm run seed
+```
