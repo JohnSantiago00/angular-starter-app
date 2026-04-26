@@ -1,10 +1,31 @@
 # Angular Starter App
 
-A beginner-friendly full-stack housing listings app built with **Angular** on the frontend and **Express + MongoDB Atlas** on the backend.
+A beginner-friendly full-stack housing listings app built with:
 
-## Repository Layout
+- **Angular** frontend
+- **Express + TypeScript** backend
+- **MongoDB Atlas** as the database
+- **Docker Compose** for local development
 
-The app lives in the `angular-PropertyListing/` folder:
+This README teaches the project **only the Docker way**.
+
+---
+
+## What runs in Docker
+
+Docker Compose starts:
+
+- the Angular development server on `http://localhost:4200`
+- the Express API server on `http://localhost:3000`
+
+## What does not run in Docker
+
+This project does **not** run MongoDB locally in Docker.
+It still uses **MongoDB Atlas** through `server/.env`.
+
+---
+
+## Project structure
 
 ```text
 angular-starter-app/
@@ -15,42 +36,19 @@ angular-starter-app/
 └── README.md
 ```
 
-## Stack
+---
 
-- Angular 21
-- TypeScript
-- Express 5
-- MongoDB Atlas
-- Mongoose
-- Docker Compose for local development
+## Prerequisites
 
-## Local Development URLs
+Before starting, make sure you have:
 
-- Frontend: `http://localhost:4200`
-- Backend: `http://localhost:3000`
+- Docker installed
+- Docker running
+- a local file at `angular-PropertyListing/server/.env`
+- a valid `MONGODB_URI` in that `.env`
+- your current IP added to MongoDB Atlas Network Access if required
 
-## Quick Start Without Docker
-
-### 1. Install client dependencies
-```bash
-cd angular-PropertyListing/client
-npm install
-```
-
-### 2. Install server dependencies
-```bash
-cd ../server
-npm install
-```
-
-### 3. Configure environment variables
-Create `angular-PropertyListing/server/.env` from the example file:
-
-```bash
-cp .env.example .env
-```
-
-Expected shape:
+Your `server/.env` should look like this:
 
 ```env
 PORT=3000
@@ -58,222 +56,221 @@ CLIENT_ORIGIN=http://localhost:4200
 MONGODB_URI=mongodb+srv://<username>:<password>@<cluster-url>/<database-name>?retryWrites=true&w=majority
 ```
 
-### 4. Seed MongoDB
-```bash
-cd /home/nick/Projects/angular-starter-app/angular-PropertyListing/server
-npm run seed
-```
+Do **not** commit your real `.env` file.
 
-### 5. Start the backend
-```bash
-cd /home/nick/Projects/angular-starter-app/angular-PropertyListing/server
-npm run dev
-```
+---
 
-### 6. Start the frontend
-```bash
-cd /home/nick/Projects/angular-starter-app/angular-PropertyListing/client
-npm start
-```
+## Run the project
 
-Open the app at:
-
-- `http://localhost:4200`
-
-## Docker Development
-
-This project also includes a **development-only Docker Compose setup**.
-
-### What Docker runs
-- the Angular development server in a container
-- the Express TypeScript development server in a container
-
-### What Docker does not run
-- MongoDB locally
-- nginx
-- production builds or deployment infrastructure
-
-### How MongoDB still works
-The server container still uses **MongoDB Atlas** through `server/.env`.
-Docker does not replace Atlas here.
-
-## Docker prerequisites
-
-Before using Docker, make sure you have:
-- Docker installed
-- Docker Desktop or the Docker daemon running
-- `angular-PropertyListing/server/.env` created locally
-- a working Atlas `MONGODB_URI`
-- your current IP added to Atlas Network Access if required
-
-## Docker commands
-
-Important: run Docker Compose from the app root, not from `client/` or `server/`.
+Important: run Docker Compose from the app root:
 
 ```bash
 cd /home/nick/Projects/angular-starter-app/angular-PropertyListing
 ```
 
-### Run everything
+### Start everything
+
 ```bash
 docker compose up --build
 ```
 
-### Run in background
+### Start everything in the background
+
 ```bash
 docker compose up -d --build
 ```
 
-### Stop containers
+When it works, you should have:
+
+- frontend at `http://localhost:4200`
+- backend at `http://localhost:3000`
+
+---
+
+## Stop the project
+
 ```bash
 docker compose down
 ```
 
-### Rebuild images
+---
+
+## Rebuild the project
+
 ```bash
 docker compose build
 ```
 
-### Run the seed script from Docker
+If you need a full rebuild without cache:
+
+```bash
+docker compose build --no-cache
+```
+
+---
+
+## Seed the database
+
+This project still uses MongoDB Atlas, but you can run the seed script from inside the server container.
+
 ```bash
 docker compose exec server npm run seed
 ```
 
-### View logs
+---
+
+## View logs
+
+### All logs
+
 ```bash
 docker compose logs -f
 ```
 
-### View only server logs
+### Server logs only
+
 ```bash
 docker compose logs -f server
 ```
 
-### View only client logs
+### Client logs only
+
 ```bash
 docker compose logs -f client
 ```
 
-## How Docker is wired
+---
 
-### Server container
-- builds from `./server`
-- exposes `3000`
-- loads env vars from `./server/.env`
-- mounts `./server:/app` for live development
-- keeps container `node_modules` inside the container with `/app/node_modules`
+## Test the backend
 
-### Client container
-- builds from `./client`
-- exposes `4200`
-- mounts `./client:/app` for live development
-- keeps container `node_modules` inside the container with `/app/node_modules`
-
-### Important Docker note
-The `.env` file is **not copied into the image**.
-It is only loaded at runtime by Docker Compose through `env_file`.
-
-## Test the app
-
-### Test backend
 ```bash
 curl http://localhost:3000/
 curl http://localhost:3000/locations
 curl http://localhost:3000/locations/0
 ```
 
-### Open frontend
+Expected:
+
+- `GET /` returns health JSON
+- `GET /locations` returns a list of housing locations
+- `GET /locations/0` returns one housing location
+
+---
+
+## Open the frontend
+
+Open this in your browser:
+
 - `http://localhost:4200`
 
-## Features
+You should be able to:
 
-- Browse housing listings
-- Filter listings by city on the frontend
-- View listing details by numeric `id`
-- MongoDB-backed API reads
-- Seed script for loading sample data into MongoDB Atlas
-- Docker Compose development workflow for the Angular client and Express server
+- see housing cards
+- search by city
+- click into a details page
 
-## API
+---
 
-- `GET /`
-- `GET /locations`
-- `GET /locations/:id`
-
-## Notes
-
-- The frontend search is currently **client-side filtering**.
-- MongoDB Atlas is the live runtime data source.
-- Sample seed data is kept in the server seed script area, not in the frontend.
-- The Docker setup runs only the Angular client and Express server.
-- This Docker setup is for **local development learning only**.
-
-## What we are not adding yet
-
-- local MongoDB container
-- production nginx
-- deployment setup
-- authentication
-- application persistence
-
-## Troubleshooting
-
-### Docker starts but the server cannot connect to Atlas
-Check:
-- `server/.env` exists
-- `MONGODB_URI` is correct
-- Atlas IP allowlist includes your current IP
-- Atlas user/password are valid
+## Common problems
 
 ### Port 3000 is already in use
-This usually means you already have the Express server running outside Docker.
 
-Check what is using the port:
+This usually means the Express server is already running outside Docker.
+
+Check the port:
+
 ```bash
 lsof -i :3000
 ```
 
-Then stop the conflicting process and retry:
+Then stop the conflicting process and run:
+
 ```bash
 docker compose down
 docker compose up
 ```
 
 ### Port 4200 is already in use
-This usually means you already have Angular running outside Docker.
 
-Check what is using the port:
+This usually means Angular is already running outside Docker.
+
+Check the port:
+
 ```bash
 lsof -i :4200
 ```
 
-Then stop the conflicting process and retry:
+Then stop the conflicting process and run:
+
 ```bash
 docker compose down
 docker compose up
 ```
 
-### Angular cannot reach the backend
-Check:
-- server container is running
-- `http://localhost:3000/` works
-- frontend still points to `http://localhost:3000/locations`
-- the server container actually started without an Atlas connection error
+### Server cannot connect to MongoDB Atlas
 
-Useful log commands:
+Check:
+
+- `server/.env` exists
+- `MONGODB_URI` is correct
+- your Atlas username/password are correct
+- your current IP is allowed in Atlas Network Access
+- special characters in the password are URL-encoded if needed
+
+Then inspect logs:
+
 ```bash
 docker compose logs -f server
-docker compose logs -f client
 ```
 
-### Seed command fails in Docker
-Check:
-- server container is running
-- env vars were loaded from `server/.env`
-- Atlas is reachable from your machine/network
-- your current IP is allowed in Atlas Network Access
+### Angular loads but listings do not appear
 
-Run the seed command again with:
+Check:
+
+```bash
+curl http://localhost:3000/
+curl http://localhost:3000/locations
+```
+
+If those fail, the backend is the problem, not Angular.
+
+### Seed fails
+
+Run:
+
 ```bash
 docker compose exec server npm run seed
 ```
+
+If it fails, check:
+
+- Atlas connectivity
+- env vars
+- IP whitelist settings
+
+---
+
+## Docker mental model
+
+- your **browser** talks to the Angular container on port `4200`
+- Angular talks to the Express container on port `3000`
+- Express talks to **MongoDB Atlas** using `MONGODB_URI`
+- Atlas is remote, not in Docker
+
+---
+
+## What this setup is for
+
+This setup is for:
+
+- local development
+- learning Docker with a full-stack app
+- running Angular and Express together easily
+
+This setup is **not** adding:
+
+- local MongoDB container
+- nginx
+- deployment
+- auth
+- application persistence
